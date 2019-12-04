@@ -1,0 +1,125 @@
+damage:
+- damage
+- destroy
+- destruction
+- broken
+- hurt
+- detritus
+- sos
+- hazard
+- disaster
+- danger
+- hazard
+- explosion
+- exploding
+- explode
+- collapse
+- housing
+- house
+
+water:
+- flood
+- hygiene
+- latrine
+- irrigation
+- pipe
+- pump
+- river
+- sanitary
+- sewage
+- sewer
+- stream
+- underground
+- wash
+- waste
+- water
+- thirst
+
+electricity:
+- valve
+- heat
+- gas
+- power
+- electric
+- candle
+- flashlight
+- generator
+- black
+- blackout
+- dark
+- radio
+- energy
+- nuclear
+- fuel
+- battery
+- radiant
+
+chemical:
+- chemical
+- radiation
+- powerplant
+- poison
+
+people:
+- missing
+- lost
+- dying
+- die
+- death
+- hungry
+- help
+- hunger
+- need
+- asap
+- sos
+- fatality
+- fatalities
+- dead
+- death
+- kill
+- evacuation
+- evacuate
+- evacuating
+- escape
+- food
+- rescue
+- rescuing
+- emergency
+- shelter
+- run out
+
+
+injuries:
+- injury
+- injure
+- medical
+- red cross
+- urgent
+- care
+- ambulance
+- aid
+
+earthquake:
+- earthquake
+- tremor
+- epicenter
+- rumble
+- aftershock
+
+transportation:
+- airport
+- bridge
+- bus
+- congestion
+- drive
+- flight
+- jam
+- road
+- street
+- subway
+- traffic
+- train
+- stuck
+- transit
+- transportation
+- highway
