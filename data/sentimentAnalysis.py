@@ -27,6 +27,8 @@ with open('YInt.csv', newline='') as data:
         reader = csv.DictReader(data)
         writer = csv.DictWriter(senti, fieldnames=fieldnames, quoting=csv.QUOTE_ALL)
         counter = 0
+        writer.writeheader()
+
         for row in reader:
             print(counter)
             counter += 1
