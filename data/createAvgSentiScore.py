@@ -5,7 +5,7 @@ import re
 
 with open('senti.csv', newline='') as senti:
     with open('avg_senti.csv', 'w', newline='') as avgs:
-        fieldnames = ["time","score", "max", "min"]
+        fieldnames = ["time","score", "max", "min", "number_of_tweets"]
         reader = csv.DictReader(senti)
         writer = csv.DictWriter(avgs, fieldnames=fieldnames, quoting=csv.QUOTE_ALL)
         counter = 0
@@ -35,6 +35,7 @@ with open('senti.csv', newline='') as senti:
                 to_write["score"] = average
                 to_write["max"] = max(curr_scores)
                 to_write["min"] = min(curr_scores)
+                to_write["number_of_tweets"] = len(curr_scores)
                 curr_time = row["time"]
                 curr_scores = []
                 start = row["senti"].find("compound': ")
