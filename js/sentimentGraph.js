@@ -18,7 +18,7 @@ Sentiment.prototype.initVis = function () {
         .attr("height", this.height)
         .attr("x", 0)
         .attr("y", 0)
-        .style("stroke", "black")
-        .style("stroke-width", ".5")
-        .style("fill", "blue");
+        .style("stroke", "blue")
+        .style("stroke-width", "1")
+        .style("fill-opacity", "0");
 }

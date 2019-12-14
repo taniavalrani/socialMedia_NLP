@@ -25,8 +25,8 @@ Timeline.prototype.initVis = function () {
         .attr("x", 0)
         .attr("y", 0)
         .style("stroke", "black")
-        .style("stroke-width", ".5") 
-        .style("fill", "yellow");
+        .style("stroke-width", "1")
+        .style("fill-opacity", "0");
 
 
     this.svg = outer_svg.append("g")

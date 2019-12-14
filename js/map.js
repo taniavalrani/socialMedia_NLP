@@ -18,8 +18,8 @@ Map.prototype.initVis = function () {
         .attr("height", this.height)
         .attr("x", 0)
         .attr("y", 0)
-        .style("stroke", "black")
-        .style("stroke-width", ".5")
-        .style("fill", "green");
+        .style("stroke", "green")
+        .style("stroke-width", "1")
+        .style("fill-opacity", "0");
 }
 
