@@ -28,15 +28,28 @@ group.append("rect")
     .style("stroke-width", ".5")
     .style("fill", "white");
 
-dummy_data = [{time: 0, num_msgs: 1}, {time: 1, num_msgs: 5}, {time: 2, num_msgs: 7}, {time: 3, num_msgs: 3}, {time: 4, num_msgs: 2}]
+const filename_prefix = (location.hostname != "localhost"? "/socialMedia_NLP": "");
 
-let timeline = new Timeline(group, dummy_data);
-let popular = new Popular(group, dummy_data);
-let sentiment = new Sentiment(group, dummy_data);
-let map = new  Map(group, dummy_data);
-let feed = new Feed(group, dummy_data);
+const avg_senti_filename = filename_prefix + "/../data/avg_senti.csv";
 
 
+// Note: When importing a csv, add a function within this chain, add a parameter to the execute function, and add the csv object when calling execute
+d3.csv(avg_senti_filename, function(error1, avg_senti_csv) {
+    d3.csv(avg_senti_filename, function(error2, YIntRetweets) {
+        execute(avg_senti_csv, YIntRetweets);
+    });
+});
 
 
-timeline.onBrush(() => {});
+var dummy_data = [{time: 0, num_msgs: 1}, {time: 1, num_msgs: 5}, {time: 2, num_msgs: 7}, {time: 3, num_msgs: 3}, {time: 4, num_msgs: 2}];
+
+function execute(avg_senti_csv, YIntRetweets) {
+
+    let timeline = new Timeline(group, dummy_data);
+    let popular = new Popular(group, dummy_data);
+    let sentiment = new Sentiment(group, avg_senti_csv);
+    let map = new  Map(group, dummy_data);
+    let feed = new Feed(group, dummy_data);
+
+    timeline.onBrush(() => {});
+}
