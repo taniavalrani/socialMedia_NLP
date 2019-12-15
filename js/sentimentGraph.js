@@ -29,13 +29,13 @@ Sentiment.prototype.initVis = function () {
     this.svg = this.base_svg.append("g")
         .attr("transform", "translate(" + this.margin.x + "," + -this.margin.y + ")");
 
-    this.yScale = d3.scaleLinear().domain([-1, 1]).range([this.height, this.margin.y + 10]);
+    this.yScale = d3.scaleLinear()
+        .domain([-1, 1])
+        .range([this.height, this.margin.y + 10]);
     
-    let parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
-    let timeFormat = d3.timeFormat("%m/%d")
-    let yearRange = [parseTime(this.data[0].time), parseTime(this.data[this.data.length-1].time)];
-    
-    this.xScale = d3.scaleTime().domain(yearRange).range([0, this.width - this.margin.x - 10]);
+    this.xScale = d3.scaleTime()
+        .domain([this.data[0].time, this.data[this.data.length-1].time])
+        .range([0, this.width - this.margin.x - 10]);
 
     this.yAxis = d3.axisLeft(this.yScale)
         .ticks(10)
@@ -43,7 +43,7 @@ Sentiment.prototype.initVis = function () {
 
     this.xAxis = d3.axisBottom(this.xScale)
         .ticks(5)
-        .tickFormat(d => timeFormat(d))
+        .tickFormat(d => d3.timeFormat("%m/%d")(d))
 
     this.svg.append("g")
         .attr("class", "y_axis")
@@ -56,15 +56,15 @@ Sentiment.prototype.initVis = function () {
         .selectAll("text")	
         .attr("dy", ".80em")
 
-    let priceline = d3.line()
-        .x(d => { return this.xScale(parseTime(d.time)); })
-        .y(d => { return this.yScale(parseFloat(d.score)); });
-
     this.svg.append("path")
         .attr("class", "line")
-        .attr("d", priceline(this.data)); 
+        .datum(this.data)
+        .attr("d", d3.line()
+            .x(d => { return this.xScale(d.time); })
+            .y(d => { return this.yScale(d.score); }))
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1)
     
-    
-
 }
 

@@ -35,6 +35,15 @@ const avg_senti_filename = filename_prefix + "/../data/avg_senti.csv";
 
 // Note: When importing a csv, add a function within this chain, add a parameter to the execute function, and add the csv object when calling execute
 d3.csv(avg_senti_filename, function(error1, avg_senti_csv) {
+    
+    avg_senti_csv.forEach(d => { // Format data
+        d.min = parseFloat(d.min);
+        d.max = parseFloat(d.max);
+        d.score = parseFloat(d.score);
+        d.time = d3.timeParse("%Y-%m-%d %H:%M:%S")(d.time);
+        d.number_of_tweets = parseInt(d.number_of_tweets);
+    });
+
     d3.csv(avg_senti_filename, function(error2, YIntRetweets) {
         execute(avg_senti_csv, YIntRetweets);
     });
@@ -45,11 +54,15 @@ var dummy_data = [{time: 0, num_msgs: 1}, {time: 1, num_msgs: 5}, {time: 2, num_
 
 function execute(avg_senti_csv, YIntRetweets) {
 
-    let timeline = new Timeline(group, dummy_data);
+    let timeline = new Timeline(group, avg_senti_csv);
     let popular = new Popular(group, dummy_data);
     let sentiment = new Sentiment(group, avg_senti_csv);
     let map = new  Map(group, dummy_data);
     let feed = new Feed(group, dummy_data);
 
-    timeline.onBrush(() => {});
+    timeline.onBrush(function (){
+        var selection = d3.brushSelection(d3.select(".brush").node());
+        let left = selection[0], right = selection[1];
+        let l_time = timeline.xScale.invert(left), r_time = timeline.xScale.invert(right);
+    });
 }

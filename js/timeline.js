@@ -6,6 +6,11 @@ Timeline = function(_base_svg, _data){
     let x = 10, y = 520;
     this.width = 850;
     this.height = 90;
+
+    this.margin = {x:40, y: 20};
+
+    this.graph_height = this.height - 2*this.margin.y;
+    this.graph_width = this.width - 2*this.margin.x;
     
     this.base_svg = _base_svg.append("g").attr("transform", "translate(" + x + "," + y + ")");
     this.data = _data;
@@ -13,13 +18,8 @@ Timeline = function(_base_svg, _data){
 }
 
 Timeline.prototype.initVis = function () {
-    let outer_svg = this.base_svg.append("svg") // is extra svg redudnant?? TODO
-        .attr("width", this.width)
-        .attr("height", this.height)
-        .attr("x", x)
-        .attr("y", y);
     
-    outer_svg.append("rect")
+    this.base_svg.append("rect")
         .attr("width", this.width)
         .attr("height", this.height)
         .attr("x", 0)
@@ -28,27 +28,27 @@ Timeline.prototype.initVis = function () {
         .style("stroke-width", "1")
         .style("fill-opacity", "0");
 
-
-    this.svg = outer_svg.append("g")
-        .attr("transform", "translate(" + 0 + "," + 0 + ")");
-
     // Scales and axes
-    this.x = d3.scaleTime()
-        .range([0, this.width])
-        .domain(d3.extent(this.data, function(d) { return d.time; }));
+    this.svg = this.base_svg.append("g")
+        .attr("transform", "translate(" + this.margin.x + "," + this.margin.y + ")");
 
-    this.y = d3.scaleLinear()
-        .range([height, 0])
-        .domain([0, d3.max(this.data, function(d) { return d.num_msgs; })]);
+    this.yScale = d3.scaleLinear()
+        .domain(d3.extent(this.data.map(d => d.number_of_tweets)))
+        .range([this.graph_height, 0]);
+    
+        this.xScale = d3.scaleTime()
+        .domain([this.data[0].time, this.data[this.data.length-1].time])
+        .range([0, this.graph_width]);
 
-    this.xAxis = d3.axisBottom()
-        .scale(this.x);
+    this.xAxis = d3.axisBottom(this.xScale)
+        .ticks(5)
+        .tickFormat(d => d3.timeFormat("%m/%d")(d))
 
     // SVG area path generator
     this.area = d3.area()
-        .x(function(d) { return this.x(d.time); })
-        .y0(height)
-        .y1(function(d) { return this.y(d.num_msgs); });
+        .x((d) => this.xScale(d.time))
+        .y0(50)
+        .y1((d) => this.yScale(d.number_of_tweets));
 
     // Draw area by using the path generator
     this.svg.append("path")
@@ -56,15 +56,15 @@ Timeline.prototype.initVis = function () {
         .attr("fill", "#ccc")
         .attr("d", this.area);
 
-    this.svg.append("g")
+    this.base_svg.append("g")
         .attr("class", "x-axis axis")
-        .attr("transform", "translate(0," + this.height + ")")
+        .attr("transform", "translate(" + this.margin.x + "," + (this.height - this.margin.y) + ")")
         .call(this.xAxis);
 }
 
 Timeline.prototype.onBrush = function (brushed) {
     this.brush = d3.brushX()
-        .extent([[0,0], [this.width,this.height]])
+        .extent([[0,0], [this.graph_width, this.graph_height]])
         .on("brush", brushed);
 
     this.svg.append("g")
