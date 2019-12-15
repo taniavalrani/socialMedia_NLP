@@ -31,7 +31,7 @@ group.append("rect")
 const filename_prefix = (location.hostname != "localhost"? "/socialMedia_NLP": "");
 
 const avg_senti_filename = filename_prefix + "/../data/avg_senti.csv";
-
+const top10_filename = filename_prefix + "/../data/top10.json";
 
 // Note: When importing a csv, add a function within this chain, add a parameter to the execute function, and add the csv object when calling execute
 d3.csv(avg_senti_filename, function(error1, avg_senti_csv) {
@@ -44,6 +44,12 @@ d3.csv(avg_senti_filename, function(error1, avg_senti_csv) {
         d.number_of_tweets = parseInt(d.number_of_tweets);
     });
 
+    // top_10_csv.forEach(d => {
+    //     d.re_count = parseInt(d.re_count)
+    //     d.user = d.user
+    //     d.message = d.message
+    // });
+
     d3.csv(avg_senti_filename, function(error2, YIntRetweets) {
         execute(avg_senti_csv, YIntRetweets);
     });
@@ -55,7 +61,7 @@ var dummy_data = [{time: 0, num_msgs: 1}, {time: 1, num_msgs: 5}, {time: 2, num_
 function execute(avg_senti_csv, YIntRetweets) {
 
     let timeline = new Timeline(group, avg_senti_csv);
-    let popular = new Popular(group, dummy_data);
+    let popular = new Popular(group, top10_filename);
     let sentiment = new Sentiment(group, avg_senti_csv);
     let map = new  Map(group, dummy_data);
     let feed = new Feed(group, dummy_data);
