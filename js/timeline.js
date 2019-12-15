@@ -29,14 +29,15 @@ Timeline.prototype.initVis = function () {
         .style("fill-opacity", "0");
 
     // Scales and axes
-    this.svg = this.base_svg.append("g")
-        .attr("transform", "translate(" + this.margin.x + "," + this.margin.y + ")");
+    this.svg = this.base_svg
+        .append("g").attr("transform", "translate(" + this.margin.x + "," + this.margin.y + ")")
+        .append("svg").attr("width", this.graph_width).attr("height", this.graph_height);
 
     this.yScale = d3.scaleLinear()
         .domain(d3.extent(this.data.map(d => d.number_of_tweets)))
         .range([this.graph_height, 0]);
     
-        this.xScale = d3.scaleTime()
+    this.xScale = d3.scaleTime()
         .domain([this.data[0].time, this.data[this.data.length-1].time])
         .range([0, this.graph_width]);
 
@@ -67,8 +68,11 @@ Timeline.prototype.onBrush = function (brushed) {
         .extent([[0,0], [this.graph_width, this.graph_height]])
         .on("brush", brushed);
 
-    this.svg.append("g")
+    this.brushGroup = this.svg.append("g")
         .attr("class", "brush")
         .call(this.brush)
 }
 
+Timeline.prototype.onClear = function (cleared) {
+    this.svg.on("click", () => {this.brushGroup.call(this.brush.move, null); cleared();});
+}
