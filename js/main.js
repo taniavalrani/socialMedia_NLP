@@ -66,9 +66,7 @@ function execute(avg_senti_csv, YIntRetweets) {
     let map = new  Map(group, dummy_data);
     let feed = new Feed(group, dummy_data);
 
-    timeline.onBrush(function (){
-        var selection = d3.brushSelection(d3.select(".brush").node());
-        let left = selection[0], right = selection[1];
-        let l_time = timeline.xScale.invert(left), r_time = timeline.xScale.invert(right);
-    });
+    timeline.onBrush(() => sentiment.update(timeline.xScale.invert));
+    timeline.onClear(() => sentiment.update(null));
+
 }
