@@ -25,7 +25,7 @@ d3.json(data, function(data) {
             .attr("height", this.height)
             .attr("x", 0)
             .attr("y", 0)
-            .style("stroke", "red")
+            .style("stroke", "#69b3a2")
             .style("stroke-width", "1")
             .style("fill-opacity", "0");
         
@@ -105,7 +105,8 @@ d3.json(data, function(data) {
                 return x(d.re_count) - 25;}))
           .attr("y",  (function(d) { return y(d.user) + y.bandwidth() / 2 ; } ))
           .attr("dx", ".75em")
-          .text(function(d) { return d.re_count; });    
+          .text(function(d) { return d.re_count; })
+          .style("fill", "white");    
 
         // text label for the x axis
         svg.append("text")             
