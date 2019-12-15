@@ -21,8 +21,6 @@ Sentiment.prototype.initVis = function () {
     this.box = this.base_svg.append("rect")
         .attr("width", this.width)
         .attr("height", this.height)
-        .attr("x", 0)
-        .attr("y", 0)
         .style("stroke", "blue")
         .style("stroke-width", "1")
         .style("fill-opacity", "0");
@@ -45,7 +43,7 @@ Sentiment.prototype.initVis = function () {
 
     this.xAxis = d3.axisBottom(this.xScale)
         .ticks(5)
-        .tickFormat(d => d3.timeFormat("%m/%d")(d))
+        // .tickFormat(d => d3.timeFormat("%m/%d")(d))
 
     this.svg.append("g")
         .attr("class", "y_axis")
@@ -55,17 +53,27 @@ Sentiment.prototype.initVis = function () {
         .attr("class", "x_axis")
         .attr("transform", "translate(0," + this.height + ")")
         .call(this.xAxis)
-        .selectAll("text")	
-        .attr("dy", ".80em")
 
-    this.linegraph = 
-        this.svg.append("svg")
-        .attr("id", "canvas")
-        .attr("x", 0)
-        .attr("y", 0)
+    this.svg.append("text")            
+        .attr("transform",
+            "translate(" + (this.width/2 - 40) + " ," + 
+                    33 + ")")
+        .style("text-anchor", "middle")
+        .text("Tweet Sentiment Analysis Over Time")
+        .style("text-anchor", "middle")
+        .style("fill", "#7a0099")
+        .style("font-size", "12px")
+        .style("font-weight", "bold");
+        
+
+    this.clipbox = this.svg.append("clipPath")
+        .attr("id", "clip")
+        .append("rect")
         .attr("width", this.width - 2*this.margin.x)
-        .attr("height", this.height)
-    
+        .attr("height", this.height);
+
+    this.linegraph = this.svg.append("g")
+        .attr("clip-path", "url(#clip)")
         .append("path")
         .attr("id", "linegraph")
         .datum(this.data)
@@ -88,7 +96,8 @@ Sentiment.prototype.update = function (coord_to_time) {
         this.xScale.domain(this.full_domain);
     }
 
-    this.xAxisGroup.call(d3.axisBottom(this.xScale));
+
+    this.xAxisGroup.call(d3.axisBottom(this.xScale).ticks(5));
     
     this.linegraph
         .transition()

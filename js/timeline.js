@@ -61,12 +61,68 @@ Timeline.prototype.initVis = function () {
         .attr("class", "x-axis axis")
         .attr("transform", "translate(" + this.margin.x + "," + (this.height - this.margin.y) + ")")
         .call(this.xAxis);
+
+
+    this.makeTooltipText = (total_tweets) => (total_tweets? total_tweets: "All") + " tweets selected";
+    
+    this.tooltip = this.base_svg.append("text")
+        .style("text-anchor", "middle")
+        .text(this.makeTooltipText(null))
+        .attr("x", this.graph_width / 2 + 30)
+        .attr("y", 15)
+        .style("text-anchor", "middle")
+        .style("font-weight", "bold")
+        // .style("fill", "#7a0099")
+        .style("font-size", "12px")
+
+    this.easyTimeFormat = d3.timeFormat("%A %I:%M %p")
+
+    this.leftdate = this.base_svg.append("text")
+        .style("text-anchor", "middle")
+        .text("")
+        .attr("y", 30)
+        .style("text-anchor", "right")
+        .style("font-size", "10px")
+
+    this.rightdate = this.base_svg.append("text")
+        .style("text-anchor", "left")
+        .text("")
+        .attr("y", 30)
+        .style("font-size", "10px")
+}
+
+Timeline.prototype.handleToolTip = function () {
+    let selection = d3.event.selection;
+    if (selection) {
+        let coord_to_time =  this.xScale.invert;
+        let left = coord_to_time(selection[0]), right = coord_to_time(selection[1]);
+
+        let sum = 0;
+        this.data.some(d => {
+            if (d.time > right)
+                return true;
+            if (d.time >= left)
+                sum += d.number_of_tweets;
+        });
+        this.tooltip.text(this.makeTooltipText(sum));
+
+        console.log(this.easyTimeFormat(left));
+        this.leftdate.text(this.easyTimeFormat(left))
+            .attr("x", selection[0]-5);
+
+        this.rightdate.text(this.easyTimeFormat(right))
+            .attr("x", selection[1]+43);
+    } else {
+        this.tooltip.text(this.makeTooltipText(null));
+        this.leftdate.text("");
+        this.rightdate.text("");
+    }
 }
 
 Timeline.prototype.onBrush = function (brushed) {
     this.brush = d3.brushX()
         .extent([[0,0], [this.graph_width, this.graph_height]])
-        .on("brush", brushed);
+        .on("brush", () => {brushed(); this.handleToolTip()});
 
     this.brushGroup = this.svg.append("g")
         .attr("class", "brush")
@@ -74,5 +130,11 @@ Timeline.prototype.onBrush = function (brushed) {
 }
 
 Timeline.prototype.onClear = function (cleared) {
-    this.svg.on("click", () => {this.brushGroup.call(this.brush.move, null); cleared();});
+    this.svg.on("click", () => {
+        this.brushGroup.call(this.brush.move, null);
+        this.tooltip.text(this.makeTooltipText(null));
+        this.leftdate.text("");
+        this.rightdate.text("");
+        cleared();
+    });
 }

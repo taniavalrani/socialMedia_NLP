@@ -17,6 +17,7 @@ Popular = function(_base_svg, _data){
         this.data = _data;
         this.initVis();
     }
+
 d3.json(data, function(data) {
     Popular.prototype.initVis = function () {
         // console.log(d3)
@@ -120,7 +121,7 @@ d3.json(data, function(data) {
 
         svg.append("text")            
             .attr("transform",
-                "translate(" + (width/2) + " ," + 
+                "translate(" + (width/2 - 20) + " ," + 
                            (0 - (margin.top / 2)) + ")")
             .style("text-anchor", "middle")
             .text("Top 10 tweets most retweeted tweets during earthquake period")
