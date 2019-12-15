@@ -106,7 +106,6 @@ Timeline.prototype.handleToolTip = function () {
         });
         this.tooltip.text(this.makeTooltipText(sum));
 
-        console.log(this.easyTimeFormat(left));
         this.leftdate.text(this.easyTimeFormat(left))
             .attr("x", selection[0]-5);
 

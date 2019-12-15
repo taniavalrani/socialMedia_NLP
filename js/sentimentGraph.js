@@ -16,8 +16,6 @@ Sentiment = function(_base_svg, _data){
 }
 
 Sentiment.prototype.initVis = function () {
-    console.log(this.data);
-
     this.box = this.base_svg.append("rect")
         .attr("width", this.width)
         .attr("height", this.height)
@@ -94,8 +92,8 @@ Sentiment.prototype.update = function (coord_to_time) {
         this.xScale.domain(new_domain);
     } else {
         this.xScale.domain(this.full_domain);
+        
     }
-
 
     this.xAxisGroup.call(d3.axisBottom(this.xScale).ticks(5));
     
@@ -105,14 +103,4 @@ Sentiment.prototype.update = function (coord_to_time) {
         .attr("d", d3.line()
         .x(d => { return this.xScale(d.time); })
         .y(d => { return this.yScale(d.score); }));
-        
-        // .on("mouseover", d => {
-        //     vis.tooltip.text(d.key)
-        // })
-        // .on("mouseout", d => {
-        //     vis.tooltip.text("")
-        // });
-
-    // this.desplaydata 
-
 }
