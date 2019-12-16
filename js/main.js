@@ -53,13 +53,25 @@ d3.csv(avg_senti_filename, function(error1, avg_senti_csv) {
         })
 
         d3.csv(yIntFiltered_filename, function(error3, YIntFiltered) {
-
+            let tparse = d3.timeParse("%Y-%m-%d")
+            let dates = [tparse("2020-04-06"), tparse("2020-04-07"), tparse("2020-04-08"), tparse("2020-04-09"), tparse("2020-04-10")];
+            let days = ["mon", "tue", "wed", "thurs", "fri"]
+            let YIntFilteredByDay = {mon: [], tue: [], wed: [], thurs: [], fri: []};
+            
+            let cur_day = 0
             YIntFiltered.forEach(d => {
                 d.time = d3.timeParse("%Y-%m-%d %H:%M:%S")(d.time);
                 d.categories = new Set(d.categories.split(","));
+
+                if (cur_day < 4 && d.time >= dates[cur_day + 1]) {
+                    cur_day++;
+                }
+                YIntFilteredByDay[days[cur_day]].push(d);
             })
 
-            execute(avg_senti_csv, YIntRetweets, YIntFiltered);
+            console.log(YIntFilteredByDay);
+
+            execute(avg_senti_csv, YIntRetweets, YIntFilteredByDay);
         });
     });
 });
@@ -72,8 +84,9 @@ function execute(avg_senti_csv, YIntRetweets, YIntFiltered) {
     let timeline = new Timeline(group, avg_senti_csv);
     let popular = new Popular(group, YIntRetweets);
     let sentiment = new Sentiment(group, avg_senti_csv);
-    let map = new  Map(group, dummy_data);
     let feed = new Feed(group, YIntFiltered);
+    let map = new  Map(group, dummy_data, (city) => {feed.applyFilter(city)}, (category) => feed.applyCategoryFilter(category));
+
 
     timeline.onBrush(() => {
         sentiment.update(timeline.xScale.invert)
