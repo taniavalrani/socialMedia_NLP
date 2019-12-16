@@ -78,12 +78,12 @@ function execute(avg_senti_csv, YIntRetweets, YIntFiltered) {
     timeline.onBrush(() => {
         sentiment.update(timeline.xScale.invert)
         popular.update(timeline.xScale.invert);
-        feed.update(timeline.xScale.invert)
+        // feed.update(timeline.xScale.invert)
     });
     timeline.onClear(() => {
         sentiment.update(null)
         popular.update(null)
-        feed.update(null);
+        // feed.update(null);
     });
 
 }
