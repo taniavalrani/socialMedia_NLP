@@ -19,7 +19,6 @@ Popular = function(_base_svg, _data){
 }
 
 Popular.prototype.initVis = function () {
-    console.log(this.data);
     this.box = this.base_svg.append("rect")
         .attr("width", this.width)
             .attr("height", this.height)
@@ -55,7 +54,7 @@ Popular.prototype.initVis = function () {
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(this.xRange));
         
-        this.xAxis.selectAll("text")
+    this.xAxis.selectAll("text")
         .attr("transform", "translate(-10,0)rotate(-45)")
         .style("text-anchor", "end");
 
@@ -68,41 +67,59 @@ Popular.prototype.initVis = function () {
     this.yAxis = this.svg.append("g")
         .call(d3.axisLeft(this.yRange));
     
-        this.yAxis.selectAll("text")
-        .attr("font-size", "8px")
+    this.yAxis.selectAll("text")
+        .attr("font-size", "7px")
 
     //Bars
 
     var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
-    this.svg.selectAll("myRect")
-        .data(this.top10data)
-        .enter()
-        .append("rect")
-        .attr("x", this.xRange(0) )
-        .attr("y", d => { return this.yRange(d.user); })
-        .attr("width", d => { return this.xRange(d.re_count); })
-        .attr("height", this.yRange.bandwidth() - 5)
-        .attr("fill", "#69b3a2")
-        .on("mousemove", function(d){
-            tooltip
-            .style("left", d3.event.pageX - 50 + "px")
-            .style("top", d3.event.pageY - 70 + "px")
-            .style("display", "inline-block")
-            .html("<strong> "+ (d.user) + " - " + d3.timeFormat("%A %m/%d %I:%M %p")(d.time) + "</strong>" + "<br>" + (d.message));
-        })
-        .on("mouseout", function(d){ tooltip.style("display", "none");});
-            
-    this.svg.selectAll(".text")         
-        .data(this.top10data)
-        .enter()
-        .append("text")
-        .attr("class","label")
-        .attr("x", d => {return this.xRange(d.re_count) - 25;})
-        .attr("y",  d => { return this.yRange(d.user) + this.yRange.bandwidth() / 2;})
-        .attr("dx", ".75em")
-        .text(function(d) { return d.re_count; })
-        .style("fill", "white");    
+    this.makeRect = (reset) => {
+        this.rectsData = this.svg.selectAll("myRect")
+            .data(this.top10data);
+        
+        if (reset) {
+            this.rects.remove()
+        }
+        
+        this.rects = this.rectsData
+            .enter()
+            .append("rect")
+            .attr("id", "updatable")
+            .attr("x", () => this.xRange(0))
+            .attr("y", d => { return this.yRange(d.user); })
+            .attr("width", d => { return this.xRange(d.re_count); })
+            .attr("height", this.yRange.bandwidth() - 5)
+            .attr("fill", "#69b3a2")
+            .on("mousemove", function(d){
+                tooltip
+                .style("left", d3.event.pageX - 50 + "px")
+                .style("top", d3.event.pageY - 70 + "px")
+                .style("display", "inline-block")
+                .html("<strong> "+ (d.user) + " - " + d3.timeFormat("%A %m/%d %I:%M %p")(d.time) + "</strong>" + "<br>" + (d.message));
+            })
+            .on("mouseout", function(d){ tooltip.style("display", "none");});
+
+        this.textsData = this.svg.selectAll(".text")         
+            .data(this.top10data);
+        
+        if (reset) {
+            this.texts.remove();
+        }
+
+        this.texts = this.textsData
+            .enter()
+            .append("text")
+            .attr("id", "updatable")
+            .attr("class","label")
+            .attr("x", d => {return this.xRange(d.re_count) - 25;})
+            .attr("y",  d => { return this.yRange(d.user) + this.yRange.bandwidth() / 2;})
+            .attr("dx", ".75em")
+            .text(function(d) { return d.re_count; })
+            .style("fill", "white");  
+    }
+
+    this.makeRect(null);
 
     // text label for the x axis
     this.svg.append("text")             
@@ -137,14 +154,13 @@ Popular.prototype.initVis = function () {
         .style("fill", "#7a0099")
         .style("font-size", "10px");                 
 
-    this.svg = svg
+    // this.svg = svg
 }
 
 Popular.prototype.update = function (coord_to_time) {
     var selection = d3.event.selection;
 
-    if (coord_to_time && selection) {
-            
+    if (coord_to_time && selection) {    
         let l_time = coord_to_time(selection[0]), r_time = coord_to_time(selection[1]);
         
         this.top10data = []
@@ -157,7 +173,6 @@ Popular.prototype.update = function (coord_to_time) {
             }
             return count == 10;
         });
-        // this.xScale.domain(new_domain);
     } else {
         this.top10data = this.data.slice(0,10);
     }
@@ -166,5 +181,9 @@ Popular.prototype.update = function (coord_to_time) {
     this.yRange.domain(this.top10data.map(d => d.user));
 
     this.xAxis.call(d3.axisBottom(this.xRange));
-    this.yAxis.call(d3.axisLeft(this.yRange));
+    this.yAxis.call(d3.axisLeft(this.yRange))
+        .selectAll("text")
+        .attr("font-size", "7px")
+
+    this.makeRect(true);
 }
