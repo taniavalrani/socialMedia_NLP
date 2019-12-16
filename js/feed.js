@@ -20,7 +20,7 @@ Feed = function(_base_svg, _data){
     this.desplayData = this.data[this.day];
 
     this.activeCityFilter = null;
-    
+    this.activeCategoryFilter = null;
 
     this.initVis();
 }
@@ -146,18 +146,24 @@ Feed.prototype.initVis = function () {
 
 Feed.prototype.applyCategoryFilter = function (category) {
     this.activeCategoryFilter = category;
+    this.applyFilter(this.activeCityFilter);
 }
 
-Feed.prototype.applyFilter = function (city) {
-    
+Feed.prototype.applyFilter = function (city) {    
     if (city) {
         this.activeCityFilter = city
         this.desplayData = this.data[this.day].filter(d => {
-            return d.location == city;
+            return d.location == city && (!this.activeCategoryFilter || d.categories.has(this.activeCategoryFilter));
         });
     } else {
         this.activeCityFilter = null
         this.desplayData = this.data[this.day];
+
+        if (this.activeCategoryFilter) {
+            this.desplayData = this.desplayData.filter(d => {
+                return d.categories.has(this.activeCategoryFilter)
+            })
+        }
     }
 
     this.update();
