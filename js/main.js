@@ -32,6 +32,7 @@ const filename_prefix = (location.hostname != "localhost"? "/socialMedia_NLP": "
 
 const avg_senti_filename = filename_prefix + "/data/avg_senti.csv";
 const ranked_retweets_filename = filename_prefix + "/data/YIntRetweetsWithTime.csv";
+const yIntFiltered_filename = filename_prefix + "/data/YIntFiltered.csv";
 
 // Note: When importing a csv, add a function within this chain, add a parameter to the execute function, and add the csv object when calling execute
 d3.csv(avg_senti_filename, function(error1, avg_senti_csv) {
@@ -51,28 +52,38 @@ d3.csv(avg_senti_filename, function(error1, avg_senti_csv) {
             d.time = d3.timeParse("%Y-%m-%d %H:%M:%S")(d.time);
         })
 
-        execute(avg_senti_csv, YIntRetweets);
+        d3.csv(yIntFiltered_filename, function(error3, YIntFiltered) {
+
+            YIntFiltered.forEach(d => {
+                d.time = d3.timeParse("%Y-%m-%d %H:%M:%S")(d.time);
+                d.categories = new Set(d.categories.split(","));
+            })
+
+            execute(avg_senti_csv, YIntRetweets, YIntFiltered);
+        });
     });
 });
 
 
 var dummy_data = [{time: 0, num_msgs: 1}, {time: 1, num_msgs: 5}, {time: 2, num_msgs: 7}, {time: 3, num_msgs: 3}, {time: 4, num_msgs: 2}];
 
-function execute(avg_senti_csv, YIntRetweets) {
+function execute(avg_senti_csv, YIntRetweets, YIntFiltered) {
 
     let timeline = new Timeline(group, avg_senti_csv);
     let popular = new Popular(group, YIntRetweets);
     let sentiment = new Sentiment(group, avg_senti_csv);
     let map = new  Map(group, dummy_data);
-    let feed = new Feed(group, dummy_data);
+    let feed = new Feed(group, YIntFiltered);
 
     timeline.onBrush(() => {
         sentiment.update(timeline.xScale.invert)
         popular.update(timeline.xScale.invert);
+        feed.update(timeline.xScale.invert)
     });
     timeline.onClear(() => {
         sentiment.update(null)
         popular.update(null)
+        feed.update(null);
     });
 
 }
