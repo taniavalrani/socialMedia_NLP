@@ -29,10 +29,10 @@ group.append("rect")
     .style("fill", "white");
 
 const filename_prefix = (location.hostname != "localhost"? "/socialMedia_NLP": "");
+console.log(location.hostname, filename_prefix)
 
 const avg_senti_filename = filename_prefix + "/../data/avg_senti.csv";
-const ranked_retweets_filename = "/../data/YIntRetweetsWithTime.csv";
-const top10_filename = filename_prefix + "/../data/top10.json";
+const ranked_retweets_filename = filename_prefix + "/../data/YIntRetweetsWithTime.csv";
 
 // Note: When importing a csv, add a function within this chain, add a parameter to the execute function, and add the csv object when calling execute
 d3.csv(avg_senti_filename, function(error1, avg_senti_csv) {
