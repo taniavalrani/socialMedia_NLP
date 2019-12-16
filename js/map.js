@@ -59,7 +59,9 @@ Map.prototype.initVis = function () {
         .attr("transform", "translate(15,-50)");
 
     // Load map data
-    d3v3.json('../data/st_himark.json', function(error, mapData) {
+    const filename_prefix = (location.hostname != "localhost"? "/socialMedia_NLP": "");
+
+    d3v3.json(filename_prefix + '/data/st_himark.json', function(error, mapData) {
         var features = mapData.features;
 
         console.log(features)
